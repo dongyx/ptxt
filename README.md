@@ -24,11 +24,22 @@ The page size is set to A4 with proper margins.
 Usage
 -----
 
-- `ptxt [file]`
+- `ptxt file`
 
-	Converts *file* to PDF, and prints the result to the standard output.
+	Convert *file* to PDF.
+	The result is printed to the standard output.
 	If *file* is omitted, the standard input is used.
+
+- `ptxt --help`
+
+	Print the usage.
 
 - `ptxt --version`
 
-	Prints version information.
+	Print version information.
+
+Installation
+------------
+
+	$ make
+	$ sudo make install
