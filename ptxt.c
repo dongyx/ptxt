@@ -23,12 +23,17 @@ void genpdf(FILE *in);
 int nbyte, npage;
 int cl_pos, pr_pos, pg_pos[NPAGE], pc_pos[NPAGE], sl_pos[NPAGE];
 int xref_pos;
+FILE *out;
+
+int writepdf(char* data)
+{
+	fprintf(out, data);
+}
 
 int main(int argc, char **argv)
 {
 	FILE *in;
-
-	if (argc > 2) {
+	if (argc > 3) {
 		fprintf(stderr, "%s\n", USAGE);
 		exit(-1);
 	}
@@ -46,9 +51,25 @@ int main(int argc, char **argv)
 			perror(PROGNAME);
 			exit(-1);
 		}
-	} else
+		argv++;
+		if(*argv)
+		{
+			if (!(out=fopen(*argv, "wb"))) {
+				perror(PROGNAME);
+				exit(-1);
+			}
+		} else {
+			out = stdout;
+
+		}
+	} else {
 		in = stdin;
+	}
 	genpdf(in);
+	if(out != stdout)
+	{
+		fclose(out);
+	}
 	return 0;
 }
 
@@ -85,15 +106,15 @@ void genpdf(FILE *in)
 
 void genhead(void)
 {
-	nbyte += printf("%%PDF-1.4\n");
+	nbyte += fprintf(out, "%%PDF-1.4\n");
 }
 
 void gencl(void)
 {
 	cl_pos = nbyte;
-	nbyte += printf("1 0 obj\n");
-	nbyte += printf("<< /Type /Catalog /Pages 2 0 R >>\n");
-	nbyte += printf("endobj\n");
+	nbyte += fprintf(out, "1 0 obj\n");
+	nbyte += fprintf(out, "<< /Type /Catalog /Pages 2 0 R >>\n");
+	nbyte += fprintf(out, "endobj\n");
 }
 
 void genpg(void)
@@ -101,11 +122,11 @@ void genpg(void)
 	int sl;
 
 	pg_pos[npage] = nbyte;
-	nbyte += printf("%d 0 obj\n", PG_BASE+npage);
-	nbyte += printf("<< /Type /Page\n");
-	nbyte += printf("/Parent 2 0 R\n");
-	nbyte += printf("/Contents %d 0 R >>\n", PC_BASE+npage);
-	nbyte += printf("endobj\n");
+	nbyte += fprintf(out, "%d 0 obj\n", PG_BASE+npage);
+	nbyte += fprintf(out, "<< /Type /Page\n");
+	nbyte += fprintf(out, "/Parent 2 0 R\n");
+	nbyte += fprintf(out, "/Contents %d 0 R >>\n", PC_BASE+npage);
+	nbyte += fprintf(out, "endobj\n");
 }
 
 /* return stream length */
@@ -115,21 +136,21 @@ int genpc(FILE *in)
 	int sl;
 
 	pc_pos[npage] = nbyte;
-	nbyte += printf("%d 0 obj\n", PC_BASE+npage);
-	nbyte += printf("<< /Length %d 0 R >>\n", SL_BASE+npage);
-	nbyte += printf("stream\n");
+	nbyte += fprintf(out, "%d 0 obj\n", PC_BASE+npage);
+	nbyte += fprintf(out, "<< /Length %d 0 R >>\n", SL_BASE+npage);
+	nbyte += fprintf(out, "stream\n");
 	sl = gencs(in);
-	nbyte += printf("\nendstream\n");
-	nbyte += printf("endobj\n");
+	nbyte += fprintf(out, "\nendstream\n");
+	nbyte += fprintf(out, "endobj\n");
 	return sl;
 }
 
 void gensl(int n)
 {
 	sl_pos[npage] = nbyte;
-	nbyte += printf("%d 0 obj\n", SL_BASE+npage);
-	nbyte += printf("%d\n", n);
-	nbyte += printf("endobj\n");
+	nbyte += fprintf(out, "%d 0 obj\n", SL_BASE+npage);
+	nbyte += fprintf(out, "%d\n", n);
+	nbyte += fprintf(out, "endobj\n");
 }
 
 void genpr(void)
@@ -137,21 +158,21 @@ void genpr(void)
 	int i;
 
 	pr_pos = nbyte;
-	nbyte += printf("2 0 obj\n");
-	nbyte += printf("<< /Type /Pages\n");
-	nbyte += printf("/Kids [\n");
+	nbyte += fprintf(out, "2 0 obj\n");
+	nbyte += fprintf(out, "<< /Type /Pages\n");
+	nbyte += fprintf(out, "/Kids [\n");
 	for (i=0; i<npage; i++)
-		nbyte += printf("%d 0 R\n", PG_BASE+i);
-	nbyte += printf("]\n");
-	nbyte += printf("/Count %d\n", npage);
-	nbyte += printf("/MediaBox [0 0 595 842]\n");
-	nbyte += printf("/Resources << /Font << /F0 <<\n");
-	nbyte += printf("/Type /Font\n");
-	nbyte += printf("/Subtype /Type1\n");
-	nbyte += printf("/BaseFont /Courier\n");
-	nbyte += printf(">> >> >>\n");	/* end of resources dict */
-	nbyte += printf(">>\n");
-	nbyte += printf("endobj\n");
+		nbyte += fprintf(out, "%d 0 R\n", PG_BASE+i);
+	nbyte += fprintf(out, "]\n");
+	nbyte += fprintf(out, "/Count %d\n", npage);
+	nbyte += fprintf(out, "/MediaBox [0 0 595 842]\n");
+	nbyte += fprintf(out, "/Resources << /Font << /F0 <<\n");
+	nbyte += fprintf(out, "/Type /Font\n");
+	nbyte += fprintf(out, "/Subtype /Type1\n");
+	nbyte += fprintf(out, "/BaseFont /Courier\n");
+	nbyte += fprintf(out, ">> >> >>\n");	/* end of resources dict */
+	nbyte += fprintf(out, ">>\n");
+	nbyte += fprintf(out, "endobj\n");
 }
 
 void genxref(void)
@@ -159,28 +180,28 @@ void genxref(void)
 	int i;
 
 	xref_pos = nbyte;
-	puts("xref");
-	puts("0 3");
-	puts("0000000000 65535 f ");
-	printf("%010d 00000 n \n", cl_pos);
-	printf("%010d 00000 n \n", pr_pos);
-	printf("%d %d\n", PG_BASE, npage);
+	fprintf(out, "xref\n");
+	fprintf(out, "0 3\n");
+	fprintf(out, "0000000000 65535 f \n");
+	fprintf(out, "%010d 00000 n \n", cl_pos);
+	fprintf(out, "%010d 00000 n \n", pr_pos);
+	fprintf(out, "%d %d\n", PG_BASE, npage);
 	for (i=0; i<npage; i++)
-		printf("%010d 00000 n \n", pg_pos[i]);
-	printf("%d %d\n", PC_BASE, npage);
+		fprintf(out, "%010d 00000 n \n", pg_pos[i]);
+	fprintf(out, "%d %d\n", PC_BASE, npage);
 	for (i=0; i<npage; i++)
-		printf("%010d 00000 n \n", pc_pos[i]);
-	printf("%d %d\n", SL_BASE, npage);
+		fprintf(out, "%010d 00000 n \n", pc_pos[i]);
+	fprintf(out, "%d %d\n", SL_BASE, npage);
 	for (i=0; i<npage; i++)
-		printf("%010d 00000 n \n", sl_pos[i]);
+		fprintf(out, "%010d 00000 n \n", sl_pos[i]);
 }
 
 void gentail(void)
 {
-	printf("trailer\n<< /Size %d /Root 1 0 R >>\n", SL_BASE+npage);
-	puts("startxref");
-	printf("%d\n", xref_pos);
-	puts("%%EOF");
+	fprintf(out, "trailer\n<< /Size %d /Root 1 0 R >>\n", SL_BASE+npage);
+	fprintf(out, "startxref\n");
+	fprintf(out, "%d\n", xref_pos);
+	fprintf(out, "%%%%EOF\n");
 }
 
 /* return stream length */
@@ -191,23 +212,23 @@ int gencs(FILE *in)
 	int n, nl, eol, ch;
 
 	n = 0;
-	n += printf("BT\n");
-	n += printf("11 TL\n");
-	n += printf("34 784 Td\n");
-	n += printf("/F0 11 Tf\n");
+	n += fprintf(out, "BT\n");
+	n += fprintf(out, "11 TL\n");
+	n += fprintf(out, "34 784 Td\n");
+	n += fprintf(out, "/F0 11 Tf\n");
 	nl = 0;
 	while (fgets(line, sizeof line, in)) {
 		eol = strcspn(line, "\n");
 		if (!line[eol] && (ch=fgetc(in)) != '\n')
 			ungetc(ch, in);
 		line[eol] = '\0';
-		n += printf("T* (");
+		n += fprintf(out, "T* (");
 		n += escape(line);
-		n += printf(") Tj\n");
+		n += fprintf(out, ") Tj\n");
 		if (++nl == NROW)
 			break;
 	}
-	n += printf("ET");
+	n += fprintf(out, "ET");
 	nbyte += n;
 	return n;
 }
@@ -222,10 +243,10 @@ int escape(char *s)
 		case '(':
 		case ')':
 		case '\\':
-			putchar('\\');
+			fputc('\\', out);
 			n++;
 		default:
-			putchar(*s);
+			fputc(*s, out);
 			n++;
 		}
 		s++;
