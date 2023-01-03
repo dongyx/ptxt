@@ -26,10 +26,10 @@ Outputs are in the style of line printers:
 Usage
 -----
 
-- `ptxt file`
+- `ptxt file outfile`
 
 	Convert *file* to PDF.
-	The result is printed to the standard output.
+	The result is written to *outfile* or to the standard output if *outfile* is omitted,
 	If *file* is omitted, the standard input is used.
 
 - `ptxt --help`
