@@ -10,16 +10,18 @@ The *ptxt* utility is a text-to-PDF converter aiming to:
 
 To reach these goals, *ptxt* uses an ad-hoc solution instead of depending on a full-feature PDF library or rendering engine.
 
+News about this project will be published at [Twitter](https://twitter.com/dongyx2).
+
 Output Style
 ------------
 
 Outputs are in the style of line printers:
 
+- 66 lines per page
 - 80 columns
-- 66 lines
 - *Courier* font
-
-The page size is set to A4 with proper margins.
+- A4 page size
+- proper margins
 
 Usage
 -----
@@ -43,3 +45,9 @@ Installation
 
 	$ make
 	$ sudo make install
+
+Following News
+--------------
+
+- <https://www.dyx.name>
+- [Twitter](https://twitter.com/dongyx2)
