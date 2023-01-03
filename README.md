@@ -45,9 +45,3 @@ Installation
 
 	$ make
 	$ sudo make install
-
-Following News
---------------
-
-- <https://www.dyx.name>
-- [Twitter](https://twitter.com/dongyx2)
