@@ -1,7 +1,7 @@
-ptxt: Fast Text-to-PDF Converter
+PTXT: Fast Text-to-PDF Converter
 ================================
 
-The *ptxt* utility is a text-to-PDF converter aiming to:
+PTXT is a text-to-PDF converter aiming to:
 
 - fast
 - low memory consumption
