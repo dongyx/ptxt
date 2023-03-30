@@ -1,5 +1,5 @@
-`ptxt`
-======
+ptxt
+====
 
 `ptxt` is a text-to-PDF converter aiming to:
 
