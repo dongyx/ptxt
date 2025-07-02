@@ -1,27 +1,20 @@
-ptxt
+PTXT
 ====
 
-`ptxt` is a text-to-PDF converter aiming to:
+PTXT is a text-to-PDF converter aiming to:
 
 - fast
 - low memory consumption
 - stream converting, line by line
 - light weight
 
-To reach these goals, *ptxt* uses an ad-hoc solution instead of depending on a full-feature PDF library or rendering engine.
+To reach these goals, PTXT uses an ad-hoc solution instead of depending on a full-feature PDF library or rendering engine.
 
-News about this project will be published at [Twitter](https://twitter.com/dongyx2).
-
-Output Style
+Installation
 ------------
 
-Outputs are in the style of line printers:
-
-- 66 lines per page
-- 80 columns
-- *Courier* font
-- A4 page size
-- proper margins
+	$ make
+	$ sudo make install
 
 Usage
 -----
@@ -40,8 +33,19 @@ Usage
 
 	Print version information.
 
-Installation
+Output Style
 ------------
 
-	$ make
-	$ sudo make install
+Outputs are in the style of line printers:
+
+- 66 lines per page
+- 80 columns
+- *Courier* font
+- A4 page size
+- proper margins
+
+Credits
+-------
+
+PTXT was created by [DONG Yuxuan](https://www.dyx.name) in 2023.
+
